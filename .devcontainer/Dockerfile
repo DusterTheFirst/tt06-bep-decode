@@ -2,8 +2,10 @@ FROM mcr.microsoft.com/devcontainers/base:alpine-3.19
 
 ARG ARCHIVE="oss-cad-suite-linux-x64-20240316"
 
-COPY ${ARCHIVE}.tgz .
+RUN --mount=type=bind,source=${ARCHIVE}.tgz,target=${ARCHIVE}.tgz \
+    set -eux; \
+    tar -xzvf ${ARCHIVE}.tgz;
+
 RUN set -eux; \
-    tar -xzf ${ARCHIVE}.tgz; \
-    rm ${ARCHIVE}.tgz; \
-    echo "source /oss-cad-suite/environment" >> /home/vscode/.bashrc
+    echo "source /oss-cad-suite/environment;" >> /home/vscode/.bashrc; \
+    echo "unset VERILATOR_ROOT;" >> /home/vscode/.bashrc;
