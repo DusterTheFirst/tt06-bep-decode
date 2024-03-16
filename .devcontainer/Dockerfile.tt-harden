@@ -1,0 +1,34 @@
+FROM mcr.microsoft.com/devcontainers/base:bookworm
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN set -eux; \
+    apt update; \
+    apt install -y python3-pip python3-venv libcairo2; \
+    ln -sf /bin/bash /bin/sh; \
+    rm -rf /var/lib/apt/lists/*
+
+USER vscode
+ENV PATH="/home/vscode/.local/bin:${PATH}"
+
+ENV OPENLANE_ROOT=/home/vscode/tt/openlane \
+    PDK_ROOT=/home/vscode/tt/pdk \
+    PDK=sky130A \
+    OPENLANE_TAG=2023.11.23 \
+    OPENLANE_IMAGE_NAME=efabless/openlane:2023.11.23
+
+RUN git clone -b tt06 https://github.com/TinyTapeout/tt-support-tools ~/tt
+
+RUN set -eux; \
+    python3 -m venv ~/tt/venv; \
+    source ~/tt/venv/bin/activate; \
+    echo "cython<3" > /tmp/constraint.txt; \
+    PIP_CONSTRAINT=/tmp/constraint.txt pip install -r ~/tt/requirements.txt; \
+    rm /tmp/constraint.txt; \
+    echo "source ~/tt/venv/bin/activate;" >> ~/.bashrc;
+
+RUN git clone --depth=1 --branch $OPENLANE_TAG https://github.com/The-OpenROAD-Project/OpenLane.git $OPENLANE_ROOT
+# RUN set -eux; \
+#     cd $OPENLANE_ROOT; \
+#     make
+
+USER root
