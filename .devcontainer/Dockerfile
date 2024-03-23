@@ -61,6 +61,7 @@ RUN set -eux; \
     sudo apt install -y podman podman-docker; \
     sudo rm -rf /var/lib/apt/lists/*
 
-# RUN set -eu; \
+# RUN --security=insecure \
+#     set -eu; \
 #     cd $OPENLANE_ROOT; \
 #     make

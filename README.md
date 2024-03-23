@@ -31,6 +31,8 @@ The GitHub action will automatically build the ASIC files using [OpenLane](https
 - [Join the community](https://tinytapeout.com/discord)
 - [Build your design locally](https://docs.google.com/document/d/1aUUZ1jthRpg4QURIIyzlOaPWlmQzr-jBn3wZipVUPt4)
 
+(Use `tt_harden.sh` instad of `./tt/tt_tool.py --harden` to get around limitations with devcontainer)
+
 ## What next?
 
 - [Submit your design to the next shuttle](https://app.tinytapeout.com/).
