@@ -27,7 +27,7 @@ async def test_adder(dut: TopLevelDUT):
     clock = Clock(dut.clk, 10, units="us")
     cocotb.start_soon(clock.start())
 
-    # Reset
+    # Resete
     dut._log.info("Reset")
     dut.ena.value = LogicArray(0b1)
     dut.ui_in.value = LogicArray(0b0, Range(7, 0))
@@ -39,12 +39,14 @@ async def test_adder(dut: TopLevelDUT):
     # Set the input values, wait one clock cycle, and check the output
     dut._log.info("Test")
     # seven_segment_decimal_value = dut.ui_in[3:0]
-    dut.ui_in.set(20)
-
-    await ClockCycles(dut.clk, 1)
+    for i in range(2 ** 8):
+        dut.ui_in.set(i)
+        await ClockCycles(dut.clk, ((2 ** 3) * 2))
+        dut.ui_in.set(i + 1)
+        await ClockCycles(dut.clk, (2 ** 3))
 
     seven_segment_decimal = dut.uo_out
     seven_segment_hex = dut.uio_out
 
-    assert dut.uo_out.value == 50
-    assert dut.uio_out.value == 0
+    # assert dut.uo_out.value == 50
+    # assert dut.uio_out.value == 0

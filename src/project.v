@@ -7,7 +7,7 @@
 `include "seven_segment_decode.v"
 `include "binary_to_bcd.v"
 
-module project (
+module tt_um_dusterthefirst_project (
     input  wire [7:0] ui_in,    // Dedicated inputs
     output wire [7:0] uo_out,   // Dedicated outputs
     input  wire [7:0] uio_in,   // IOs: Input path
@@ -19,8 +19,9 @@ module project (
 );
   // All output pins must be assigned. If not used, assign to 0.
   assign uo_out  = {seven_segment_decimal, decimal_digit_place == 0};
-  assign uio_out = {seven_segment_hex, 1'b0};
-  assign uio_oe  = 8'b1111111;
+  // assign uio_out = {seven_segment_hex, 1'b0};
+  assign uio_out = 8'b00000000;
+  assign uio_oe  = 8'b00000000;
 
   wire [6:0] seven_segment_decimal;
   wire [6:0] seven_segment_hex;
@@ -32,7 +33,7 @@ module project (
     .clock(clk),
     .reset_n(rst_n),
 
-    .binary(uio_in),
+    .binary(ui_in),
     .digit(decimal_digit),
 
     .digit_place(decimal_digit_place)
