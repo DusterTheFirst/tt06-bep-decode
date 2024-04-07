@@ -54,7 +54,7 @@ module tt_um_dusterthefirst_project (
   serial_decode data_decode (
     .reset(!rst_n),
     .serial_clock(clk),
-    .serial_data(ui_in)
+    .serial_data(ui_in[0])
   );
 
 endmodule
