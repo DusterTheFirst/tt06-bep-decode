@@ -20,7 +20,7 @@ module tt_um_dusterthefirst_project (
 );
   // All output pins must be assigned. If not used, assign to 0.
   // assign uo_out  = {seven_segment_decimal, decimal_digit_place == 0};
-  assign uo_out = 0;
+  assign uo_out = {&preamble, & (type_1 & type_2), &constant, &thermostat_id, &room_temp, &set_temp, &state, & (tail_1 & tail_2 & tail_3) };
   // assign uio_out = {seven_segment_hex, 1'b0};
   assign uio_out = 8'b00000000;
   assign uio_oe  = 8'b00000000;
@@ -51,10 +51,34 @@ module tt_um_dusterthefirst_project (
   //   .abcdefg(seven_segment_hex)
   // );
 
+  wire [31:0] preamble;
+  wire [15:0] type_1;
+  wire [15:0] type_2;
+  wire [31:0] constant;
+  wire [31:0] thermostat_id;
+  wire [15:0] room_temp;
+  wire [15:0] set_temp;
+  wire [7:0] state;
+  wire [7:0] tail_1;
+  wire [7:0] tail_2;
+  wire [7:0] tail_3;
+
   serial_decode data_decode (
     .reset(!rst_n),
     .serial_clock(clk),
-    .serial_data(ui_in[0])
+    .serial_data(ui_in[0]),
+
+    .preamble(preamble),
+    .type_1(type_1),
+    .type_2(type_2),
+    .constant(constant),
+    .thermostat_id(thermostat_id),
+    .room_temp(room_temp),
+    .set_temp(set_temp),
+    .state(state),
+    .tail_1(tail_1),
+    .tail_2(tail_2),
+    .tail_3(tail_3)
   );
 
 endmodule
