@@ -7,6 +7,7 @@
 `include "seven_segment_decode.v"
 `include "binary_to_bcd.v"
 `include "serial_decode.v"
+`include "input_sm.v"
 
 module tt_um_dusterthefirst_project (
     input  wire [7:0] ui_in,    // Dedicated inputs
@@ -24,6 +25,12 @@ module tt_um_dusterthefirst_project (
   // assign uio_out = {seven_segment_hex, 1'b0};
   assign uio_out = 8'b00000000;
   assign uio_oe  = 8'b00000000;
+
+  input_sm input_state_machine (
+    .digital_in(ui_in[1]),
+    .clock(clk),
+    .reset(~rst_n)
+  );
 
   // wire [6:0] seven_segment_decimal;
   // wire [6:0] seven_segment_hex;

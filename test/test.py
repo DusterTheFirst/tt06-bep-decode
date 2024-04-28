@@ -2,6 +2,8 @@
 # SPDX-FileCopyrightText: © 2024 Zachary Kohnen <z.j.kohnen@student.tue.nl>
 # SPDX-License-Identifier: MIT
 
+import csv
+import os
 import math
 import cocotb
 from cocotb.clock import Clock
@@ -52,8 +54,42 @@ class TopLevelDUT(HierarchyObject):
 #     # assert dut.uo_out.value == 50
 #     # assert dut.uio_out.value == 0
 
+# @cocotb.test()
+# async def shift_in(dut: TopLevelDUT):
+#     dut._log.info("Load input trace")
+
+#     dut._log.info("Start")
+
+#     clock = Clock(dut.clk, 10, units="us")
+#     cocotb.start_soon(clock.start())
+
+#     # Reset
+#     dut._log.info("Reset")
+#     dut.ena.value = LogicArray(0b1)
+#     dut.ui_in.value = LogicArray(0b0, Range(7, 0))
+#     dut.uio_in.value = LogicArray(0b0, Range(7, 0))
+#     dut.rst_n.value = LogicArray(0b0)
+#     await ClockCycles(dut.clk, 10)
+#     dut.rst_n.value = LogicArray(0b1)
+
+#     dut._log.info("Test")
+
+#     test_case = 0b101010101010101010101010101010101101001110010001110100111001000100001101111111111111111111111110000000100011100100011111100111110000000011000000000000001100100001100100010100000000110001001010
+#     bits = math.ceil(math.log2(test_case))
+#     test_case_bits = [(test_case >> bit) & 1 for bit in range(bits - 1, -1, -1)]
+
+#     for i in test_case_bits:
+#         await ClockCycles(dut.clk, 1, rising = False)
+#         dut.ui_in[0].set(i)
+#         await ClockCycles(dut.clk, 1, rising = True)
+
+#     dut.rst_n.value = LogicArray(0b0)
+#     await ClockCycles(dut.clk, 10)
+
 @cocotb.test()
-async def shift_in(dut: TopLevelDUT):
+async def transmission(dut: TopLevelDUT):
+    dut._log.info("Load input trace")
+
     dut._log.info("Start")
 
     clock = Clock(dut.clk, 10, units="us")
@@ -70,14 +106,12 @@ async def shift_in(dut: TopLevelDUT):
 
     dut._log.info("Test")
 
-    test_case = 0b101010101010101010101010101010101101001110010001110100111001000100001101111111111111111111111110000000100011100100011111100111110000000011000000000000001100100001100100010100000000110001001010
-    bits = math.ceil(math.log2(test_case))
-    test_case_bits = [(test_case >> bit) & 1 for bit in range(bits - 1, -1, -1)]
-
-    for i in test_case_bits:
-        await ClockCycles(dut.clk, 1, rising = False)
-        dut.ui_in[0].set(i)
-        await ClockCycles(dut.clk, 1, rising = True)
+    with open(os.path.realpath('./data/transmission.csv'), newline='') as transmission:
+        transmission_reader = csv.DictReader(filter(lambda row: row[0] != "#", transmission))
+        for row in transmission_reader:
+            await ClockCycles(dut.clk, 1, rising = False)
+            dut.ui_in[1].set(float(row["Channel 1 (V)"]) > 2.5)
+            await ClockCycles(dut.clk, 1, rising = True)
 
     dut.rst_n.value = LogicArray(0b0)
     await ClockCycles(dut.clk, 10)
