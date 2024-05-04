@@ -23,7 +23,7 @@ module tt_um_dusterthefirst_project (
 );
   // All output pins must be assigned. If not used, assign to 0.
   // assign uo_out  = {seven_segment_decimal, decimal_digit_place == 0};
-  assign uo_out = {&preamble, & (type_1 & type_2), &constant, &thermostat_id, &room_temp, &set_temp, &state, & (tail_1 & tail_2 & tail_3) };
+  assign uo_out = {&thermostat_id, &room_temp, &set_temp, 5'b0};
   // assign uio_out = {seven_segment_hex, 1'b0};
   assign uio_out[7:1] = 7'b0000000;
   assign uio_oe  = 8'b10000000;
@@ -55,14 +55,6 @@ module tt_um_dusterthefirst_project (
     .clock(clk),
     .reset(~rst_n)
   );
-
-  manchester_decoder inpit_manchester_decoder (
-    .clk(clk),
-    // .reset(~rst_n),
-
-    .rx_data(ui_in[1])
-  );
-
 
   // wire [6:0] seven_segment_decimal;
   // wire [6:0] seven_segment_hex;
@@ -107,17 +99,9 @@ module tt_um_dusterthefirst_project (
     .serial_clock(clk),
     .serial_data(ui_in[0]),
 
-    .preamble(preamble),
-    .type_1(type_1),
-    .type_2(type_2),
-    .constant(constant),
     .thermostat_id(thermostat_id),
     .room_temp(room_temp),
-    .set_temp(set_temp),
-    .state(state),
-    .tail_1(tail_1),
-    .tail_2(tail_2),
-    .tail_3(tail_3)
+    .set_temp(set_temp)
   );
 
 endmodule
