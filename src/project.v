@@ -7,7 +7,9 @@
 `include "seven_segment_decode.v"
 `include "binary_to_bcd.v"
 `include "serial_decode.v"
-`include "input_sm.v"
+`include "edge_detect.v"
+`include "input_state_machine.v"
+`include "clock_recovery.v"
 
 module tt_um_dusterthefirst_project (
     input  wire [7:0] ui_in,    // Dedicated inputs
@@ -23,14 +25,37 @@ module tt_um_dusterthefirst_project (
   // assign uo_out  = {seven_segment_decimal, decimal_digit_place == 0};
   assign uo_out = {&preamble, & (type_1 & type_2), &constant, &thermostat_id, &room_temp, &set_temp, &state, & (tail_1 & tail_2 & tail_3) };
   // assign uio_out = {seven_segment_hex, 1'b0};
-  assign uio_out = 8'b00000000;
-  assign uio_oe  = 8'b00000000;
+  assign uio_out[7:1] = 7'b0000000;
+  assign uio_oe  = 8'b10000000;
 
-  input_sm input_state_machine (
+  wire pos_edge, neg_edge;
+
+  edge_detect input_edge_detect (
+    .digital_in(ui_in[1]),
+    .clock(clk),
+    .reset(~rst_n),
+
+    .pos_edge,
+    .neg_edge
+  );
+
+  clock_recovery input_clock_recovery (
+    .digital_in(ui_in[1]),
+    .clock(clk),
+    .reset(~rst_n),
+
+    .pos_edge,
+    .neg_edge,
+
+    .manchester_clock(uio_out[0])
+  );
+
+  input_state_machine input_state_machine (
     .digital_in(ui_in[1]),
     .clock(clk),
     .reset(~rst_n)
   );
+
 
   // wire [6:0] seven_segment_decimal;
   // wire [6:0] seven_segment_hex;

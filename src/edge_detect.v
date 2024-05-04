@@ -1,12 +1,12 @@
-module input_sm (
+module edge_detect (
     input wire digital_in,
     input wire clock,
-    input wire reset
-);
+    input wire reset,
 
+    output reg pos_edge,
+    output reg neg_edge
+);
     reg previous_in;
-    reg pos_edge;
-    reg neg_edge;
 
     always @(posedge clock) begin
         if (reset) begin
