@@ -39,13 +39,14 @@ module tt_um_dusterthefirst_project (
     .neg_edge
   );
 
+  wire any_edge = pos_edge || neg_edge;
+
   clock_recovery input_clock_recovery (
     .digital_in(ui_in[1]),
     .clock(clk),
     .reset(~rst_n),
 
-    .pos_edge,
-    .neg_edge,
+    .any_edge,
 
     .manchester_clock(uio_out[0])
   );

@@ -8,18 +8,18 @@ import math
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles
-from cocotb.handle import HierarchyObject, LogicObject, LogicArray, Range
+# from cocotb.handle import HierarchyObject, LogicObject, LogicArray, Range
 
 
-class TopLevelDUT(HierarchyObject):
-    ui_in: LogicObject  # Dedicated inputs [7:0]
-    uo_out: LogicObject  # Dedicated outputs [7:0]
-    uio_in: LogicObject  # IOs: Input path
-    uio_out: LogicObject  # IOs: Output path
-    uio_oe: LogicObject  # IOs: Enable path (active high: 0=input, 1=output)
-    ena: LogicObject  # will go high when the design is enabled
-    clk: LogicObject  # clock
-    rst_n: LogicObject  # reset_n - low to reset
+# class TopLevelDUT(HierarchyObject):
+#     ui_in: LogicObject  # Dedicated inputs [7:0]
+#     uo_out: LogicObject  # Dedicated outputs [7:0]
+#     uio_in: LogicObject  # IOs: Input path
+#     uio_out: LogicObject  # IOs: Output path
+#     uio_oe: LogicObject  # IOs: Enable path (active high: 0=input, 1=output)
+#     ena: LogicObject  # will go high when the design is enabled
+#     clk: LogicObject  # clock
+#     rst_n: LogicObject  # reset_n - low to reset
 
 
 # @cocotb.test()
@@ -87,7 +87,7 @@ class TopLevelDUT(HierarchyObject):
 #     await ClockCycles(dut.clk, 10)
 
 @cocotb.test()
-async def transmission(dut: TopLevelDUT):
+async def transmission(dut):
     dut._log.info("Load input trace")
 
     dut._log.info("Start")
@@ -97,12 +97,12 @@ async def transmission(dut: TopLevelDUT):
 
     # Reset
     dut._log.info("Reset")
-    dut.ena.value = LogicArray(0b1)
-    dut.ui_in.value = LogicArray(0b0, Range(7, 0))
-    dut.uio_in.value = LogicArray(0b0, Range(7, 0))
-    dut.rst_n.value = LogicArray(0b0)
+    dut.ena.value = 0b1
+    dut.ui_in.value = 0b0
+    dut.uio_in.value = 0b0
+    dut.rst_n.value = 0b0
     await ClockCycles(dut.clk, 10)
-    dut.rst_n.value = LogicArray(0b1)
+    dut.rst_n.value = 0b1
 
     dut._log.info("Test")
 
@@ -113,5 +113,5 @@ async def transmission(dut: TopLevelDUT):
             dut.ui_in[1].set(float(row["Channel 1 (V)"]) > 2.5)
             await ClockCycles(dut.clk, 1, rising = True)
 
-    dut.rst_n.value = LogicArray(0b0)
+    dut.rst_n.value = 0b0
     await ClockCycles(dut.clk, 10)
