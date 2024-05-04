@@ -110,7 +110,7 @@ async def transmission(dut):
         transmission_reader = csv.DictReader(filter(lambda row: row[0] != "#", transmission))
         for row in transmission_reader:
             await ClockCycles(dut.clk, 1, rising = False)
-            dut.ui_in[1].set(float(row["Channel 1 (V)"]) > 2.5)
+            dut.ui_in[1].value = float(row["Channel 1 (V)"]) > 2.5
             await ClockCycles(dut.clk, 1, rising = True)
 
     dut.rst_n.value = 0b0
