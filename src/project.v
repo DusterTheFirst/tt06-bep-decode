@@ -10,7 +10,6 @@
 `include "edge_detect.v"
 `include "input_state_machine.v"
 `include "clock_recovery.v"
-`include "manchester_decoder.v"
 
 module tt_um_dusterthefirst_project (
     input  wire [7:0] ui_in,    // Dedicated inputs
@@ -91,17 +90,17 @@ module tt_um_dusterthefirst_project (
   //   .abcdefg(seven_segment_hex)
   // );
 
-  wire [31:0] preamble;
-  wire [15:0] type_1;
-  wire [15:0] type_2;
-  wire [31:0] constant;
+  // wire [31:0] preamble;
+  // wire [15:0] type_1;
+  // wire [15:0] type_2;
+  // wire [31:0] constant;
   wire [31:0] thermostat_id;
   wire [15:0] room_temp;
   wire [15:0] set_temp;
-  wire [7:0] state;
-  wire [7:0] tail_1;
-  wire [7:0] tail_2;
-  wire [7:0] tail_3;
+  // wire [7:0] state;
+  // wire [7:0] tail_1;
+  // wire [7:0] tail_2;
+  // wire [7:0] tail_3;
 
   serial_decode data_decode (
     .reset(!rst_n),
