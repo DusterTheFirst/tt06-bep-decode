@@ -5,37 +5,46 @@ module clock_recovery (
     input wire pos_edge,
     input wire neg_edge,
 
-    output reg manchester_clock
+    output wire manchester_clock
 );
-
-    reg [3:0] next_counter;
-    reg [3:0] next_period;
-    reg next_manchester_clock;
-
     reg [3:0] counter;
+    reg [3:0] next_counter;
+
+    assign manchester_clock = counter > period >> 1;
+
     reg [3:0] period;
+    reg [3:0] next_period;
 
     always @(posedge clock) begin
         if (reset) begin
-            manchester_clock <= 0;
             counter <= 0;
-            period <= 10;
+            period <= 6;
         end else begin
             counter <= next_counter;
-            manchester_clock <= next_manchester_clock;
-            // period <= next_period;
+            period <= next_period;
         end
     end
 
     always @(*) begin
-        if (counter >= period || pos_edge || neg_edge) begin
+        next_counter = counter + 1;
+        next_period = period;
+
+        if (pos_edge || neg_edge) begin
+            // Early
+            if (counter < period >> 1) begin
+                next_period = period + 1;
+                // next_counter = 0;
+            end
+
+            // Late
+            if (counter > period >> 1) begin
+                next_period = period - 1;
+                // next_counter = 0;
+            end
+        end
+
+        if (counter >= period) begin
             next_counter = 0;
-            next_period = counter;
-            next_manchester_clock = ~manchester_clock;
-        end else begin
-            next_counter = counter + 1;
-            next_period = period;
-            next_manchester_clock = manchester_clock;
         end
     end
 endmodule

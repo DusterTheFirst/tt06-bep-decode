@@ -10,6 +10,7 @@
 `include "edge_detect.v"
 `include "input_state_machine.v"
 `include "clock_recovery.v"
+`include "manchester_decoder.v"
 
 module tt_um_dusterthefirst_project (
     input  wire [7:0] ui_in,    // Dedicated inputs
@@ -54,6 +55,13 @@ module tt_um_dusterthefirst_project (
     .digital_in(ui_in[1]),
     .clock(clk),
     .reset(~rst_n)
+  );
+
+  manchester_decoder inpit_manchester_decoder (
+    .clk(clk),
+    // .reset(~rst_n),
+
+    .rx_data(ui_in[1])
   );
 
 
