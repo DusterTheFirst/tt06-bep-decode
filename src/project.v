@@ -10,6 +10,7 @@
 `include "edge_detect.v"
 `include "input_state_machine.v"
 `include "clock_recovery.v"
+`include "input_timer_doohickey.v"
 
 module tt_um_dusterthefirst_project (
     input  wire [7:0] ui_in,    // Dedicated inputs
@@ -54,8 +55,20 @@ module tt_um_dusterthefirst_project (
   input_state_machine input_state_machine (
     .digital_in(ui_in[1]),
     .clock(clk),
-    .reset(~rst_n)
+    .reset(~rst_n),
+
+    .pos_edge,
+    .neg_edge
   );
+
+  input_timer_doohickey input_timer_doohickey (
+    .digital_in(ui_in[1]),
+    .clock(clk),
+    .reset(~rst_n),
+
+    .pos_edge,
+    .neg_edge
+  )
 
   // wire [6:0] seven_segment_decimal;
   // wire [6:0] seven_segment_hex;
