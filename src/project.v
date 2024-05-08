@@ -11,6 +11,7 @@
 `include "input_state_machine.v"
 `include "clock_recovery.v"
 `include "input_timer_doohickey.v"
+`include "egypt.v"
 
 module tt_um_dusterthefirst_project (
     input  wire [7:0] ui_in,    // Dedicated inputs
@@ -68,7 +69,13 @@ module tt_um_dusterthefirst_project (
 
     .pos_edge,
     .neg_edge
-  )
+  );
+
+  egypt input_egypt (
+    .digital_in(ui_in[1]),
+    .clock(clk),
+    .reset(~rst_n)
+  );
 
   // wire [6:0] seven_segment_decimal;
   // wire [6:0] seven_segment_hex;

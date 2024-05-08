@@ -6,17 +6,57 @@ module input_timer_doohickey (
     input wire pos_edge,
     input wire neg_edge
 );
-    reg [5:0] timer;
+    reg [7:0] min_timing;
+    reg [7:0] max_timing;
+    reg [7:0] timer;
+    reg counting;
+
+    reg previous_next;
+    reg previous;
 
     always @(posedge clock) begin
         if (reset) begin
             timer <= 0;
-        end else begin
+            counting <= 0;
+            min_timing <= ~0;
+            max_timing <= 0;
+
+            previous <= 0;
+        end else if (pos_edge) begin
+            counting <= 1;
+            timer <= 0;
+        end else if (neg_edge) begin
+            counting <= 0;
+
+            if (timer < min_timing) begin
+                min_timing <= timer;
+            end else if (timer > max_timing) begin
+                max_timing <= timer;
+            end
+
+            previous <= previous_next;
+        end
+
+        if (counting) begin
             timer <= timer + 1;
         end
     end
 
     always @(*) begin
-
+        if (absolute_difference(timer, min_timing) < absolute_difference(timer, max_timing)) begin
+            previous_next = 0;
+        end else begin
+            previous_next = 1;
+        end
     end
 endmodule
+
+function [7:0] absolute_difference;
+    input [7:0] a, b;
+
+    if (a > b) begin
+        absolute_difference = a - b;
+    end else begin
+        absolute_difference = b - a;
+    end
+endfunction
