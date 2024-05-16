@@ -6,8 +6,8 @@ module input_timer_doohickey (
     input wire pos_edge,
     input wire neg_edge
 );
-    reg [7:0] min_timing;
-    reg [7:0] max_timing;
+    localparam [7:0] min_timing = 9;
+    localparam [7:0] max_timing = 18;
     reg [7:0] timer;
     reg counting;
 
@@ -18,8 +18,6 @@ module input_timer_doohickey (
         if (reset) begin
             timer <= 0;
             counting <= 0;
-            min_timing <= ~0;
-            max_timing <= 0;
 
             previous <= 0;
         end else if (pos_edge) begin
@@ -27,12 +25,6 @@ module input_timer_doohickey (
             timer <= 0;
         end else if (neg_edge) begin
             counting <= 0;
-
-            if (timer < min_timing) begin
-                min_timing <= timer;
-            end else if (timer > max_timing) begin
-                max_timing <= timer;
-            end
 
             previous <= previous_next;
         end

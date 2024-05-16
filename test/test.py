@@ -106,11 +106,11 @@ async def transmission(dut):
 
     dut._log.info("Test")
 
-    with open(os.path.realpath('./data/transmission.csv'), newline='') as transmission:
+    with open(os.path.realpath('./data/transmission_digital_hs.csv'), newline='') as transmission:
         transmission_reader = csv.DictReader(filter(lambda row: row[0] != "#", transmission))
         for row in transmission_reader:
             await ClockCycles(dut.clk, 1, rising = False)
-            dut.ui_in[1].value = float(row["Channel 1 (V)"]) > 2.5
+            dut.ui_in[1].value = bool(int(row["DIO 0"]))
             await ClockCycles(dut.clk, 1, rising = True)
 
     dut.rst_n.value = 0b0
