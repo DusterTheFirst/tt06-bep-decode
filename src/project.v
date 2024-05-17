@@ -12,6 +12,7 @@
 `include "clock_recovery.v"
 `include "input_timer_doohickey.v"
 `include "egypt.v"
+`include "try_3.v"
 
 module tt_um_dusterthefirst_project (
     input  wire [7:0] ui_in,    // Dedicated inputs
@@ -25,9 +26,9 @@ module tt_um_dusterthefirst_project (
 );
   // All output pins must be assigned. If not used, assign to 0.
   // assign uo_out  = {seven_segment_decimal, decimal_digit_place == 0};
-  assign uo_out = {&thermostat_id, &room_temp, &set_temp, 5'b0};
+  assign uo_out = 8'b0;
   // assign uio_out = {seven_segment_hex, 1'b0};
-  assign uio_out[7:1] = 7'b0000000;
+  assign uio_out[7:0] = 8'b00000000;
   assign uio_oe  = 8'b10000000;
 
   wire pos_edge, neg_edge;
@@ -41,40 +42,18 @@ module tt_um_dusterthefirst_project (
     .neg_edge
   );
 
-  wire any_edge = pos_edge || neg_edge;
+  reg manchester_clock, manchester_data;
 
-  clock_recovery input_clock_recovery (
-    .digital_in(ui_in[1]),
-    .clock(clk),
-    .reset(~rst_n),
-
-    .any_edge,
-
-    .manchester_clock(uio_out[0])
-  );
-
-  input_state_machine input_state_machine (
+  state_machine3 state_machine3 (
     .digital_in(ui_in[1]),
     .clock(clk),
     .reset(~rst_n),
 
     .pos_edge,
-    .neg_edge
-  );
+    .neg_edge,
 
-  input_timer_doohickey input_timer_doohickey (
-    .digital_in(ui_in[1]),
-    .clock(clk),
-    .reset(~rst_n),
-
-    .pos_edge,
-    .neg_edge
-  );
-
-  egypt input_egypt (
-    .digital_in(ui_in[1]),
-    .clock(clk),
-    .reset(~rst_n)
+    .manchester_clock,
+    .manchester_data
   );
 
   // wire [6:0] seven_segment_decimal;
@@ -103,26 +82,26 @@ module tt_um_dusterthefirst_project (
   //   .abcdefg(seven_segment_hex)
   // );
 
-  // wire [31:0] preamble;
-  // wire [15:0] type_1;
-  // wire [15:0] type_2;
-  // wire [31:0] constant;
+  wire [31:0] preamble;
+  wire [15:0] type_1;
+  wire [15:0] type_2;
+  wire [31:0] constant;
   wire [31:0] thermostat_id;
   wire [15:0] room_temp;
   wire [15:0] set_temp;
-  // wire [7:0] state;
-  // wire [7:0] tail_1;
-  // wire [7:0] tail_2;
-  // wire [7:0] tail_3;
+  wire [7:0] state;
+  wire [7:0] tail_1;
+  wire [7:0] tail_2;
+  wire [7:0] tail_3;
 
   serial_decode data_decode (
     .reset(!rst_n),
-    .serial_clock(clk),
-    .serial_data(ui_in[0]),
+    .serial_clock(manchester_clock),
+    .serial_data(manchester_data),
 
-    .thermostat_id(thermostat_id),
-    .room_temp(room_temp),
-    .set_temp(set_temp)
+    .thermostat_id,
+    .room_temp,
+    .set_temp
   );
 
 endmodule

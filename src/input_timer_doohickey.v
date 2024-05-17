@@ -14,6 +14,8 @@ module input_timer_doohickey (
     reg previous_next;
     reg previous;
 
+    reg sample;
+
     always @(posedge clock) begin
         if (reset) begin
             timer <= 0;
