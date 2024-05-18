@@ -1,3 +1,13 @@
+function [7:0] absolute_difference;
+    input [7:0] a, b;
+
+    if (a > b) begin
+        absolute_difference = a - b;
+    end else begin
+        absolute_difference = b - a;
+    end
+endfunction
+
 module input_timer_doohickey (
     input wire digital_in,
     input wire clock,
@@ -44,13 +54,3 @@ module input_timer_doohickey (
         end
     end
 endmodule
-
-function [7:0] absolute_difference;
-    input [7:0] a, b;
-
-    if (a > b) begin
-        absolute_difference = a - b;
-    end else begin
-        absolute_difference = b - a;
-    end
-endfunction
