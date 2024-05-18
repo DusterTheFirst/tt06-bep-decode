@@ -26,7 +26,7 @@ module tt_um_dusterthefirst_project (
 );
   // All output pins must be assigned. If not used, assign to 0.
   // assign uo_out  = {seven_segment_decimal, decimal_digit_place == 0};
-  assign uo_out = 8'b0;
+  assign uo_out = {&preamble, &type_1 & &type_2, &constant, &thermostat_id, &room_temp, &set_temp, &state, &tail_1 & &tail_2 & &tail_3};
   // assign uio_out = {seven_segment_hex, 1'b0};
   assign uio_out[7:0] = 8'b00000000;
   assign uio_oe  = 8'b10000000;
@@ -101,7 +101,16 @@ module tt_um_dusterthefirst_project (
 
     .thermostat_id,
     .room_temp,
-    .set_temp
+    .set_temp,
+
+    .preamble,
+    .type_1,
+    .type_2,
+    .constant,
+    .state,
+    .tail_1,
+    .tail_2,
+    .tail_3
   );
 
 endmodule
