@@ -8,11 +8,7 @@
 `include "binary_to_bcd.v"
 `include "serial_decode.v"
 `include "edge_detect.v"
-`include "input_state_machine.v"
-`include "clock_recovery.v"
-`include "input_timer_doohickey.v"
-`include "egypt.v"
-`include "try_3.v"
+`include "state_machine.v"
 
 module tt_um_dusterthefirst_project (
     input  wire [7:0] ui_in,    // Dedicated inputs
@@ -42,9 +38,9 @@ module tt_um_dusterthefirst_project (
     .neg_edge
   );
 
-  reg manchester_clock, manchester_data;
+  reg manchester_clock, manchester_data, transmission_begin;
 
-  state_machine3 state_machine3 (
+  state_machine state_machine (
     .digital_in(ui_in[1]),
     .clock(clk),
     .reset(~rst_n),
@@ -53,7 +49,9 @@ module tt_um_dusterthefirst_project (
     .neg_edge,
 
     .manchester_clock,
-    .manchester_data
+    .manchester_data,
+
+    .transmission_begin
   );
 
   // wire [6:0] seven_segment_decimal;
@@ -95,7 +93,9 @@ module tt_um_dusterthefirst_project (
   wire [7:0] tail_3;
 
   serial_decode data_decode (
-    .reset(!rst_n),
+    .reset(transmission_begin),
+    .clock(clk),
+
     .serial_clock(manchester_clock),
     .serial_data(manchester_data),
 

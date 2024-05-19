@@ -1,5 +1,7 @@
 module serial_decode (
     input wire reset,
+    input wire clock,
+
     input wire serial_data,
     input wire serial_clock,
 
@@ -20,27 +22,30 @@ module serial_decode (
     // PREAMBLE: 32h TYPE?: 16h 16h CONSTANT: 32h THERMOSTAT ID: 32h ROOM: 16d SET: 16d STATE?: 8h CRC?: 8h 8h 8h
 
     // TODO: FIXME: use DFF RAM??? https://tinytapeout.com/specs/memory/#using-dff-ram
-    reg [191:0] shift_register;
+    reg [192:0] shift_register;
+    wire full = shift_register[192];
+    wire [191:0] transmission = shift_register[191:0];
 
     assign
-        preamble        = shift_register[191:160],
-        type_1          = shift_register[159:144],
-        type_2          = shift_register[143:128],
-        constant        = shift_register[127:96 ],
-        thermostat_id   = shift_register[ 95:64 ],
-        room_temp       = shift_register[ 63:48 ],
-        set_temp        = shift_register[ 47:32 ],
-        state           = shift_register[ 31:24 ],
-        tail_1          = shift_register[ 23:16 ],
-        tail_2          = shift_register[ 15:8  ],
-        tail_3          = shift_register[  7:0  ];
+        preamble        = transmission[191:160],
+        type_1          = transmission[159:144],
+        type_2          = transmission[143:128],
+        constant        = transmission[127:96 ],
+        thermostat_id   = transmission[ 95:64 ],
+        room_temp       = transmission[ 63:48 ],
+        set_temp        = transmission[ 47:32 ],
+        state           = transmission[ 31:24 ],
+        tail_1          = transmission[ 23:16 ],
+        tail_2          = transmission[ 15:8  ],
+        tail_3          = transmission[  7:0  ];
 
     // Shift Register
-    always @(posedge serial_clock) begin
+    always @(posedge clock) begin
         if (reset) begin
-            shift_register <= 192'b0;
-        end else begin
-            shift_register <= shift_register << 1 | {191'b0, serial_data};
+            shift_register <= 193'b1;
+        end else if (!full && serial_clock == 1'b1) begin
+            shift_register[192:1] <= shift_register[191:0];
+            shift_register[0] <= serial_data;
         end
     end
 endmodule
