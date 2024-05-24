@@ -88,8 +88,6 @@ from cocotb.triggers import ClockCycles
 
 @cocotb.test()
 async def transmission(dut):
-    dut._log.info("Load input trace")
-
     dut._log.info("Start")
 
     clock = Clock(dut.clk, 10, units="us")
@@ -112,6 +110,71 @@ async def transmission(dut):
             await ClockCycles(dut.clk, 1, rising = False)
             dut.ui_in[1].value = bool(int(row["DIO 0"]))
             await ClockCycles(dut.clk, 1, rising = True)
+
+    dut.rst_n.value = 0b0
+    await ClockCycles(dut.clk, 10)
+
+@cocotb.test()
+async def transmission_super_long(dut):
+    dut._log.info("Start")
+
+    clock = Clock(dut.clk, 10, units="us")
+    cocotb.start_soon(clock.start())
+
+    # Reset
+    dut._log.info("Reset")
+    dut.ena.value = 0b1
+    dut.ui_in.value = 0b0
+    dut.uio_in.value = 0b0
+    dut.rst_n.value = 0b0
+    await ClockCycles(dut.clk, 500)
+    dut.rst_n.value = 0b1
+
+    dut._log.info("Test")
+
+    hs_super_long = [f"./data/hs_super_long/{x:02}.csv" for x in range(1, 11)]
+
+    for file in hs_super_long:
+        dut._log.info(f"testing chunk {file}")
+        with open(os.path.realpath(file), newline='') as transmission:
+            transmission_reader = csv.DictReader(filter(lambda row: row[0] != "#", transmission))
+            for row in transmission_reader:
+                await ClockCycles(dut.clk, 1, rising = False)
+                dut.ui_in[1].value = bool(int(row["DIO 0"]))
+                await ClockCycles(dut.clk, 1, rising = True)
+
+    dut.rst_n.value = 0b0
+    await ClockCycles(dut.clk, 10)
+
+
+@cocotb.test()
+async def transmission_repeating(dut):
+    dut._log.info("Start")
+
+    clock = Clock(dut.clk, 10, units="us")
+    cocotb.start_soon(clock.start())
+
+    # Reset
+    dut._log.info("Reset")
+    dut.ena.value = 0b1
+    dut.ui_in.value = 0b0
+    dut.uio_in.value = 0b0
+    dut.rst_n.value = 0b0
+    await ClockCycles(dut.clk, 500)
+    dut.rst_n.value = 0b1
+
+    dut._log.info("Test")
+
+    hs_repeating = [f"./data/hs_repeating/{x:02}.csv" for x in range(1, 11)]
+
+    for file in hs_repeating:
+        dut._log.info(f"testing chunk {file}")
+        with open(os.path.realpath(file), newline='') as transmission:
+            transmission_reader = csv.DictReader(filter(lambda row: row[0] != "#", transmission))
+            for row in transmission_reader:
+                await ClockCycles(dut.clk, 1, rising = False)
+                dut.ui_in[1].value = bool(int(row["DIO 0"]))
+                await ClockCycles(dut.clk, 1, rising = True)
 
     dut.rst_n.value = 0b0
     await ClockCycles(dut.clk, 10)

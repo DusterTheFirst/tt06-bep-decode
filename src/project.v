@@ -93,7 +93,7 @@ module tt_um_dusterthefirst_project (
   wire [7:0] tail_3;
 
   serial_decode data_decode (
-    .reset(transmission_begin),
+    .reset(transmission_begin || !rst_n),
     .clock(clk),
 
     .serial_clock(manchester_clock),
