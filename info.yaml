@@ -5,7 +5,7 @@ project:
   discord:      "dusterthefirst"      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
   description:  "A manchester decoder and parser for 433 mhz"      # One line description of what your project does
   language:     "Verilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
-  clock_hz:     0       # Clock frequency in Hz (or 0 if not applicable)
+  clock_hz:     20_000       # Clock frequency in Hz (or 0 if not applicable)
 
   # How many tiles your design occupies? A single tile is about 167x108 uM.
   tiles: "1x1"          # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2, 6x2 or 8x2
@@ -30,14 +30,14 @@ pinout:
   ui[7]: ""
 
   # Outputs
-  uo[0]: ""
-  uo[1]: ""
-  uo[2]: ""
-  uo[3]: ""
-  uo[4]: ""
-  uo[5]: ""
-  uo[6]: ""
-  uo[7]: ""
+  uo[0]: "7_segment_A"
+  uo[1]: "7_segment_B"
+  uo[2]: "7_segment_C"
+  uo[3]: "7_segment_D"
+  uo[4]: "7_segment_E"
+  uo[5]: "7_segment_F"
+  uo[6]: "7_segment_G"
+  uo[7]: "7_segment_DP"
 
   # Bidirectional pins
   uio[0]: ""

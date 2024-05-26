@@ -30,7 +30,7 @@ module tt_um_dusterthefirst_project (
   wire pos_edge, neg_edge;
 
   edge_detect input_edge_detect (
-    .digital_in(ui_in[1]),
+    .digital_in(ui_in[0]),
     .clock(clk),
     .reset(~rst_n),
 
@@ -41,12 +41,12 @@ module tt_um_dusterthefirst_project (
   reg manchester_clock, manchester_data, transmission_begin;
 
   // TODO: FIXME:
-  // Use preamble to determine start of transmission, not a rising edge
-  // Also maybe use the known preamble to fix alignment problems with preamble (such as first transmission)
+  // Future (report): Use preamble to determine start of transmission, not a rising edge
+  // Future (report): Also maybe use the known preamble to fix alignment problems with preamble (such as first transmission)
   // Maybe double buffer results, verify preamble and other known sections before sending them to the visualizer
   // Connect seven segment displays
   state_machine state_machine (
-    .digital_in(ui_in[1]),
+    .digital_in(ui_in[0]),
     .clock(clk),
     .reset(~rst_n),
 
